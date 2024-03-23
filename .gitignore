@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# Flask specific
+instance/
+.webassets-cache
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+*.idea/
+
+# Logs and databases
+*.log
+*.db
+
+#Firebase files
+firebase_sa.json
