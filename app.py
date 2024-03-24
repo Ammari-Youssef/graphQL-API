@@ -14,8 +14,6 @@ app = Flask(__name__)
 cors = CORS(app)
 # Load database configurations from Config class
 app.config.from_object(Config)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['CORS_HEADERS'] = 'Content-Type'
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
