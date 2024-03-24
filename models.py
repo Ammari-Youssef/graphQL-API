@@ -28,7 +28,7 @@ class UserProfile(db.Model):
     birth_date = db.Column(db.DateTime, nullable=False)
     age = db.Column(db.Integer, nullable=False)
     
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     
     # Relationships
     # Define the back reference to User
