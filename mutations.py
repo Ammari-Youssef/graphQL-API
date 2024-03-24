@@ -46,3 +46,27 @@ class AddTask(graphene.Mutation):
         except Exception as e:
             db.session.rollback()
             return AddTask(task=None, response=ResponseField(message=str(e), status=400))
+        
+
+class AddUserProfile(graphene.Mutation):
+    class Arguments:
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+        sexe = graphene.String(required=True)
+        birth_date = graphene.String(required=True)
+        age = graphene.Int(required=True)
+        user_id = graphene.Int(required=True)
+
+    profile = graphene.Field(UserProfileObject)
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, **kwargs):
+        try:
+            new_profile = UserProfile(**kwargs)
+            db.session.add(new_profile)
+            db.session.commit()
+
+            return AddUserProfile(profile=new_profile, response=ResponseField(message='Profile added successfully', status=200))
+        except Exception as e:
+            db.session.rollback()
+            return AddUserProfile(profile=None, response=ResponseField(message=str(e), status=400))

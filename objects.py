@@ -2,6 +2,10 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from models import *
 
+class ResponseField(graphene.ObjectType):
+    message = graphene.String()
+    status = graphene.Int()
+    
 class UserObject(SQLAlchemyObjectType):
     class Meta:
         model = User
@@ -10,7 +14,9 @@ class UserObject(SQLAlchemyObjectType):
 class TaskObject(SQLAlchemyObjectType):
     class Meta:
         model = Task
-        
-class ResponseField(graphene.ObjectType):
-    message = graphene.String()
-    status = graphene.Int()
+
+  
+class UserProfileObject(SQLAlchemyObjectType):
+    class Meta:
+        model = UserProfile
+        interfaces = (graphene.relay.Node, )
