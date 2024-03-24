@@ -22,4 +22,7 @@ class Mutation(graphene.ObjectType):
     add_user = AddUser.Field()
     add_task = AddTask.Field()
     AddUserProfile = AddUserProfile.Field()
+    
+    UpdateTask = UpdateTask.Field()
+    
 schema = graphene.Schema(query=Query, mutation=Mutation)
