@@ -79,6 +79,40 @@ class AddUserProfile(graphene.Mutation):
 ## Update Mutations 
 from sqlalchemy.orm.exc import NoResultFound
 
+
+class UpdateUser(graphene.Mutation):
+    class Arguments:
+        user_id = graphene.Int(required=True)
+        username = graphene.String()
+        email = graphene.String()
+        password = graphene.String()
+
+    user = graphene.Field(UserObject)
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, user_id, username=None, email=None, password=None):
+        try:
+            user = User.query.get(user_id)
+            msg = ""
+            if user is None:
+                raise NoResultFound(f'User with id: {user_id} not found')
+            if username is not None:
+                user.username = username
+                msg += "Username updated successfully\n"
+            if email is not None:
+                user.email = email
+                msg += "Email updated successfully\n"
+            if password is not None:
+                user.password = password
+                msg += "Password updated successfully\n"
+
+            db.session.commit()
+
+            return UpdateUser(user=user, response=ResponseField(message=f'User updated successfully\n {msg}', status=200))
+        except Exception as e:
+            db.session.rollback()
+            return UpdateUser(user=None, response=ResponseField(message=str(e), status=400))
+    
 class UpdateTask(graphene.Mutation):
     class Arguments:
         task_id = graphene.Int(required=True)
@@ -103,3 +137,91 @@ class UpdateTask(graphene.Mutation):
         db.session.commit()
 
         return UpdateTask(task=task, response=ResponseField(message='Task updated successfully', status=200))
+
+class UpdateUserProfile(graphene.Mutation):
+    class Arguments:
+        profile_id = graphene.Int(required=True)
+        first_name = graphene.String()
+        last_name = graphene.String()
+        sexe = graphene.String()
+        birth_date = graphene.DateTime()
+        age = graphene.Int()
+
+    profile = graphene.Field(UserProfileObject)
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, profile_id, first_name=None, last_name=None, sexe=None, birth_date=None, age=None):
+        profile = UserProfile.query.get(profile_id)
+        if profile is None:
+            raise NoResultFound(f'Profile with id: {profile_id} not found')
+        if first_name is not None:
+            profile.first_name = first_name
+        if last_name is not None:
+            profile.last_name = last_name
+        if sexe is not None:
+            profile.sexe = sexe
+        if birth_date is not None:
+            profile.birth_date = birth_date
+        if age is not None:
+            profile.age = age
+
+        db.session.commit()
+
+        return UpdateUserProfile(profile=profile, response=ResponseField(message='Profile updated successfully', status=200))
+    
+
+## Delete Mutations
+
+class DeleteUser(graphene.Mutation):
+    class Arguments:
+        user_id = graphene.Int(required=True)
+
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, user_id):
+        try:
+            
+            user = User.query.get(user_id)
+            if user is None:
+                raise NoResultFound(f'User with id: {user_id} not found')
+
+            db.session.delete(user)
+            db.session.commit()
+
+            return DeleteUser(response=ResponseField(message='User deleted successfully', status=200))
+        except Exception as e:
+            db.session.rollback()
+            return DeleteUser(response=ResponseField(message=str(e), status=400))
+
+
+class DeleteTask(graphene.Mutation):
+    class Arguments:
+        task_id = graphene.Int(required=True)
+
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, task_id):
+        task = Task.query.get(task_id)
+        if task is None:
+            raise NoResultFound(f'Task with id: {task_id} not found')
+
+        db.session.delete(task)
+        db.session.commit()
+
+        return DeleteTask(response=ResponseField(message='Task deleted successfully', status=200))
+
+class DeleteUserProfile(graphene.Mutation):
+    class Arguments:
+        profile_id = graphene.Int(required=True)
+
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, profile_id):
+        profile = UserProfile.query.get(profile_id)
+        if profile is None:
+            raise NoResultFound(f'Profile with id: {profile_id} not found')
+
+        db.session.delete(profile)
+        db.session.commit()
+
+        return DeleteUserProfile(response=ResponseField(message='Profile deleted successfully', status=200))

@@ -3,7 +3,7 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from mutations import *
-
+from models import *
 
 class Query(graphene.ObjectType):
     users = graphene.List(UserObject)
@@ -20,9 +20,15 @@ class Query(graphene.ObjectType):
         return UserProfile.query.all()
 class Mutation(graphene.ObjectType):
     add_user = AddUser.Field()
-    add_task = AddTask.Field()
-    AddUserProfile = AddUserProfile.Field()
+    update_user = UpdateUser.Field()
+    delete_user = DeleteUser.Field()
     
-    UpdateTask = UpdateTask.Field()
+    add_user_profile = AddUserProfile.Field()
+    update_user_profile = UpdateUserProfile.Field()
+    delete_user_profile = DeleteUserProfile.Field()
+    
+    add_task = AddTask.Field()
+    update_task = UpdateTask.Field()
+    delete_task = DeleteTask.Field()
     
 schema = graphene.Schema(query=Query, mutation=Mutation)

@@ -12,9 +12,9 @@ class User(db.Model):
     password = db.Column(db.String(120), nullable=False)
     
     # Relationships
-    tasks = db.relationship('Task', backref='user', lazy=True)
+    tasks = db.relationship('Task', backref='user', lazy=True, cascade='all, delete-orphan')
     
-    profile = db.relationship('UserProfile', back_populates='user', uselist=False)
+    profile = db.relationship('UserProfile', back_populates='user', uselist=False, cascade='all, delete-orphan')
     
     def __repr__(self):
         return '<User %r>' % self.username
