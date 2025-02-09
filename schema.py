@@ -18,6 +18,9 @@ class Query(graphene.ObjectType):
     
     def resolve_profiles(self, info):
         return UserProfile.query.all()
+    
+    def resolve_subtasks(self, info):
+        return subTask.query.all()
 class Mutation(graphene.ObjectType):
     add_user = AddUser.Field()
     update_user = UpdateUser.Field()
@@ -30,5 +33,9 @@ class Mutation(graphene.ObjectType):
     add_task = AddTask.Field()
     update_task = UpdateTask.Field()
     delete_task = DeleteTask.Field()
+    
+    add_subtask = AddSubTask.Field()
+    update_subtask = UpdateSubTask.Field()
+    delete_subtask = DeleteSubTask.Field()
     
 schema = graphene.Schema(query=Query, mutation=Mutation)

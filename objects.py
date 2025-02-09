@@ -20,3 +20,7 @@ class UserProfileObject(SQLAlchemyObjectType):
     class Meta:
         model = UserProfile
         interfaces = (graphene.relay.Node, )
+class SubTaskObject(SQLAlchemyObjectType):
+    class Meta:
+        model = subTask
+        interfaces = (graphene.relay.Node, )

@@ -225,3 +225,70 @@ class DeleteUserProfile(graphene.Mutation):
         db.session.commit()
 
         return DeleteUserProfile(response=ResponseField(message='Profile deleted successfully', status=200))
+    
+    
+
+## Add SubTask Mutation
+class AddSubTask(graphene.Mutation):
+    class Arguments:
+        title = graphene.String(required=True)
+        parent_task_description = graphene.String(required=True)
+        task_id = graphene.Int(required=True)
+
+    subtask = graphene.Field(SubTaskObject)
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, title, parent_task_description, task_id):
+        try:
+            # Check if task with the provided task_id exists
+            task = Task.query.get(task_id)
+            if not task:
+                raise Exception('Task not found')
+
+            new_subtask = subTask(title=title, parent_task_description=parent_task_description, task_id=task_id)
+            db.session.add(new_subtask)
+            db.session.commit()
+
+            return AddSubTask(subtask=new_subtask, response=ResponseField(message='SubTask added successfully', status=200))
+        except Exception as e:
+            db.session.rollback()
+            return AddSubTask(subtask=None, response=ResponseField(message=str(e), status=400))
+        
+class UpdateSubTask(graphene.Mutation):
+    class Arguments:
+        subtask_id = graphene.Int(required=True)
+        title = graphene.String()
+        parent_task_description = graphene.String()
+
+    subtask = graphene.Field(SubTaskObject)
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, subtask_id, title=None, parent_task_description=None):
+        subtask = subTask.query.get(subtask_id)
+        if subtask is None:
+            raise NoResultFound(f'SubTask with id: {subtask_id} not found')
+        if title is not None:
+            subtask.title = title
+        if parent_task_description is not None:
+            subtask.parent_task_description = parent_task_description
+
+        db.session.commit()
+
+        return UpdateSubTask(subtask=subtask, response=ResponseField(message='SubTask updated successfully', status=200))
+    
+
+class DeleteSubTask(graphene.Mutation):
+    class Arguments:
+        subtask_id = graphene.Int(required=True)
+
+    response = graphene.Field(ResponseField)
+
+    def mutate(self, info, subtask_id):
+        subtask = subTask.query.get(subtask_id)
+        if subtask is None:
+            raise NoResultFound(f'SubTask with id: {subtask_id} not found')
+
+        db.session.delete(subtask)
+        db.session.commit()
+
+        return DeleteSubTask(response=ResponseField(message='SubTask deleted successfully', status=200))
